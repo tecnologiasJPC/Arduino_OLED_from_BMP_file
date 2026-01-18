@@ -1,41 +1,34 @@
-#include <Wire.h>                 //libreria para comunicacion I2C
-#include <Adafruit_SSD1306.h>     //libreria para OLED
-#include <Adafruit_GFX.h>         //libreria para graficar en pantalla OLED
-#include "image_code.h"
+#include <Wire.h>                 // incluimos la libreria para comunicacion I2C
+#include <Adafruit_SSD1306.h>     // la libreria para pantalla OLED
+#include "image_code.h"           // el archivo con la imagen a mostrar
 
-#define SCREEN_WIDTH    128        // ancho de pantalla OLED en pixeles
-#define SCREEN_HEIGHT   64         // alto de pantalla OLED en pixeles  
-#define OLED128         0x3C       // direccion para pantalla OLED
+#define SCREEN_WIDTH    128        // definimos el ancho de pantalla OLED en pixeles
+#define SCREEN_HEIGHT   64         // el alto de pantalla OLED en pixeles  
+#define OLED128         0x3C       // definimos la direccion para pantalla OLED
 
-// crea el objeto para la pantalla OLED
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);  // creamos el objeto para la pantalla OLED
 
-void testdrawbitmap(void) {
-  display.clearDisplay();
-  display.drawBitmap(
+void testdrawbitmap(void) {   // creamos la funcion para dibujar una imagen en pantalla
+  display.clearDisplay();     // limpiamos la pantalla OLED
+  display.drawBitmap(         // dibujamos la imagen al centro de la pantalla
     (display.width()  - LOGO_WIDTH ) / 2,
     (display.height() - LOGO_HEIGHT) / 2,
     logo_bmp, LOGO_WIDTH, LOGO_HEIGHT, 1);
-  display.display();
-  delay(1000);
+  display.display();          // mostramos lo dibujado en pantalla
 }
 
-void setup() {
-  Serial.begin(9600); // initialize serial communication at 9600 bits per second:
-  while (!Serial);
+void setup() {  // creamos la funcion setup
+  Serial.begin(115200); // inicializamos la comunicacion serial
+  while (!Serial);      // esperamos a que la comunicacion serial se inicie
   
-   // inicializa la pantalla OLED
-  if(!display.begin(SSD1306_SWITCHCAPVCC, OLED128)) {
+  if(!display.begin(SSD1306_SWITCHCAPVCC, OLED128)) {// inicializamos la pantalla OLED
     Serial.println(F("Failed to initialize OLED. Verify connections"));
     while (1);
   }
-  display.clearDisplay();                 // comando para limpiar la pantalla OLED
-  display.setTextSize(1);                 // Normal 1:1 pixel scale
-  display.setTextColor(SSD1306_WHITE);    // write white text on OLED screen
+  display.clearDisplay(); // enviamos comando para limpiar la pantalla OLED
 
-  testdrawbitmap();    // Draw a small bitmap image
+  testdrawbitmap();       // mostramos la imagen en la pantalla OLED
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+void loop() { // creamos la funcion loop vacia
 }

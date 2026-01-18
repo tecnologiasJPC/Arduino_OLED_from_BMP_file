@@ -1,34 +1,40 @@
 from PIL import Image
-import os, sys
+import sys
+import os
+import time
 
 if __name__ == '__main__':
-    factor = False
+    factor = True
     print('Convert image for OLED 128x64')
-    route = os.getcwd()
-    files = os.listdir(route + '/image/')
+    route = os.path.dirname(os.path.abspath(__file__))
+    folder_i = os.path.join(route, 'image')
+    files = os.listdir(folder_i)
     if len(files) == 0:
         print(f'Add image file to image folder')
+        time.sleep(3)
         sys.exit()
     elif len(files) > 1:
         print(f'Only one file is required')
+        time.sleep(3)
         sys.exit()
 
-    img = Image.open(route + '/image/' + files[0])
+    img = Image.open(os.path.join(folder_i, files[0]))
+
+    if '.bmp' not in files[0]:
+        img_mono = img.convert('L')
+        img_binaria = img_mono.point(lambda p: 255 if p > 128 else 0)
+        img_binaria.save(os.path.join(route, 'bmp_image.bmp'), format='BMP')
+        img = Image.open(os.path.join(route, 'bmp_image.bmp'))
+
     if factor:
         w, h = img.size
         print(f'Image of width {w} and height {h}')
         factor = 64 / h
-        print(f'El factor es de {factor}')
         img_p = img.resize((int(w*factor), int(h*factor)))
         width, height = img_p.size
         print(f'New image of width {width} and height {height}')
     else:
         width, height = img.size
-
-    if width > 128:
-        print(f'Image width larger than expected: {width}, it must be below 128')
-    elif height > 64:
-        print(f'Image height larger than expected: {height}, it must be below 64')
 
     content = ''
     print(f'#define LOGO_HEIGHT {height}')
@@ -44,10 +50,8 @@ if __name__ == '__main__':
     n_width = width + compensate
     img_n = img.resize((n_width, height))
 
-    img_binaria = img_n.convert("1")  # convert to gray scale and binary
-
-    # Obtener los valores (0 para negro, 1 para blanco)
-    pixels = list(img_binaria.getdata())
+    img_binary = img_n.convert("1")  # convert to gray scale and binary
+    pixels = list(img_binary.getdata())  # Obtener los valores (0 para negro, 1 para blanco)
 
     print('static const unsigned char PROGMEM logo_bmp[] =')
     content = content + f'static const unsigned char PROGMEM logo_bmp[] =\n'
@@ -77,7 +81,8 @@ if __name__ == '__main__':
             content = content + '1'
     print('\n};')
     content = content + '\n};'
-
-    with open(route + '/ImageOLED/image_code.h', 'w') as f:
+    folder_c = os.path.join(route, 'ImageOLED')
+    with open(os.path.join(folder_c, 'image_code.h'), 'w') as f:
         f.write(content)
     print('File image_code.h created successfully')
+    input('Press enter to exit...')
