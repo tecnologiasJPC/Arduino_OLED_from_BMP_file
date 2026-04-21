@@ -1,6 +1,6 @@
 # Connections diagram
 
-Verify these connections are correctly done for arduino board and perifericos.
+Verify these connections are correctly done for arduino board and OLED screen.
 ![circuito](connections.JPG)
 
 # Use of python script
