@@ -1,6 +1,7 @@
 # Connections diagram
 
 Verify these connections are correctly done for arduino board and OLED screen.
+These connections works for Arduino Mega and Nano as well.
 ![circuito](connections.JPG)
 
 # Use of python script
